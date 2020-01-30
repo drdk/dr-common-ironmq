@@ -1,7 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
+     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <IncludeSource>true</IncludeSource>
+    <IncludeSymbols>true</IncludeSymbols>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionSuffix>localhost</VersionSuffix>
+    <Company>DR (Danish Broadcasting Corporation)</Company>
+    <Authors>DR TU</Authors>
+    <Copyright>DR (Danish Broadcasting Corporation)</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
