@@ -8,6 +8,7 @@ using DR.Common.IronMq.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
+
 namespace DR.Common.IronMq
 {
     public abstract class IronMq<TSystem> : IQueue<TSystem>
