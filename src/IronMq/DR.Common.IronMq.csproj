@@ -7,7 +7,7 @@
     <DebugType>full</DebugType>
     <IncludeSource>true</IncludeSource>
     <IncludeSymbols>true</IncludeSymbols>
-    <VersionPrefix>1.0.0</VersionPrefix>
+    <VersionPrefix>1.0.1</VersionPrefix>
     <VersionSuffix>localhost</VersionSuffix>
     <Company>DR (Danish Broadcasting Corporation)</Company>
     <Authors>DR TU</Authors>
