@@ -1,0 +1,404 @@
+swagger: '2.0'
+
+info:
+  version: "0.8.0"
+  title: IronMq api v3
+
+paths:
+  /queues/{queuename}/messages:
+    post:
+      description: |
+        Post messages to the queue
+      parameters:
+        - 
+          in: path
+          name: queuename
+          description: Name of the queue
+          required: true
+          schema:
+            type: string
+        - 
+          in: query
+          name: oauth
+          description: Access token
+          required: true
+          schema:
+            type: string
+        - 
+          in: body
+          name: EnqueueMessages
+          description: Object with message array to put in queue
+          required: true
+          schema:
+            type: object
+            properties:
+              messages:
+                type: array
+                items: 
+                  title: Message
+                  type: object
+                  properties:
+                    body:
+                      type: string
+                    delay:
+                      type: integer
+                      description: The item will not be available on the queue until this many seconds have passed. Default is 0 seconds. Maximum is 604800 seconds (7 days).
+                      default: 0
+      responses:
+        201:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+              ids:
+                type: array
+                items:
+                  type: string
+        401:
+          $ref: "#/responses/Unauthorized"
+    get:
+      description: |
+        Peek messages on the queue
+      parameters:
+        - 
+          in: path
+          name: queuename
+          description: Name of the queue
+          required: true
+          schema:
+            type: string
+        - 
+          in: query
+          name: oauth
+          description: Access token
+          required: true
+          schema:
+            type: string
+        - 
+          in: body
+          name: PeekMessagesRequest
+          description: Object with number of messages to peek
+          required: true
+          schema:
+            type: object
+            properties:
+              n:
+                type: integer
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              messages:
+                type: array
+                items:
+                  $ref: "#/definitions/Message"
+        401:
+          $ref: "#/responses/Unauthorized"
+    delete:
+      description: |
+        Clear messages on queue.
+      parameters:
+        -
+          in: path
+          name: queuename
+          description: Name of the queue to clear
+          required: true
+          schema:
+            type: string
+        -
+          in: query
+          name: oauth
+          description: Access token
+          required: true
+          schema:
+            type: string
+        - 
+          in: body
+          name: ClearMessages
+          description: Empty Object
+          required: true
+          schema:
+            type: object
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              messages:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        404:
+          $ref: "#/responses/NotFound"
+        401:
+          $ref: "#/responses/Unauthorized"
+  /queues/{queuename}/reservations:
+    post:
+      description: |
+        Get and reserve messages on the queue
+      parameters:
+        -
+          in: path
+          name: queuename
+          description: Name of the queue
+          required: true
+          schema:
+            type: string
+        -
+          in: query
+          name: oauth
+          description: Access token
+          required: true
+          schema:
+            type: string
+        -
+          in: body
+          name: ReservationRequest
+          description: Object containing reservation parameters
+          required: true
+          schema:
+            type: object
+            properties:
+              n:
+                type: integer
+              timeout:
+                type: integer
+              wait:
+                type: integer
+              delete:
+                type: boolean
+              
+      responses:
+        200:
+          name: reservationsResponse
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              messages:
+                type: array
+                items:
+                  $ref: "#/definitions/Message"
+        401:
+          $ref: "#/responses/Unauthorized"
+
+  /queues/{queuename}/messages/{messageid}:
+    delete:
+      description: |
+        Delete reserved messages by id and reservation id.
+      parameters:
+        -
+          in: path
+          name: queuename
+          description: Name of the queue
+          required: true
+          schema:
+            type: string
+        -
+          in: path
+          name: messageid
+          description: Id of the message to delete
+          required: true
+          schema:
+            type: string
+        -
+          in: query
+          name: oauth
+          description: Access token
+          required: true
+          schema:
+            type: string
+        -
+          in: body
+          name: DeleteMessageRequest
+          description: Object containing reservation id
+          required: true
+          schema:
+            type: object
+            properties:
+              reservation_id:
+                type: string
+
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              messages:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        404:
+          $ref: "#/responses/NotFound"
+        401:
+          $ref: "#/responses/Unauthorized"
+
+  /queues/{queuename}/messages/{messageid}/release:
+    post:
+      description: |
+        Release reserved message by id and reservation id.
+      parameters:
+        -
+          in: path
+          name: queuename
+          description: Name of the queue
+          required: true
+          schema:
+            type: string
+        -
+          in: path
+          name: messageid
+          description: Id of the message to release
+          required: true
+          schema:
+            type: string
+        -
+          in: query
+          name: oauth
+          description: Access token
+          required: true
+          schema:
+            type: string
+        -
+          in: body
+          name: ReleaseMessageRequest
+          description: Object containing reservation id and delay time for release
+          required: true
+          schema:
+            type: object
+            properties:
+              reservation_id:
+                type: string
+              delay:
+                type: integer
+
+      responses:
+        200:
+          description: Message released response
+          schema:
+            type: object
+            properties:
+              messages:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        404:
+          $ref: "#/responses/NotFound"
+        401:
+          $ref: "#/responses/Unauthorized"
+
+  /queues/{queuename}:
+    get:
+      description: |
+        Get queue information.
+      parameters:
+        -
+          in: path
+          name: queuename
+          description: Name of the queue
+          required: true
+          schema:
+            type: string
+        -
+          in: query
+          name: oauth
+          description: Access token
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Message released response
+          schema:
+            type: object
+            properties:
+              queue:
+                type: object
+                properties:
+                  project_id:
+                    type: string
+                  name:
+                    type: string
+                  size:
+                    type: integer
+                  total_messages:
+                    type: integer
+                  message_timeout:
+                    type: integer
+                  message_expiration:
+                    type: integer
+        404:
+          $ref: "#/responses/NotFound"
+        401:
+          $ref: "#/responses/Unauthorized"
+    delete:
+      description: |
+        Delete queue.
+      parameters:
+        -
+          in: path
+          name: queuename
+          description: Name of the queue to delete
+          required: true
+          schema:
+            type: string
+        -
+          in: query
+          name: oauth
+          description: Access token
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: object
+            properties:
+              messages:
+                type: object
+                properties:
+                  msg:
+                    type: string
+        404:
+          $ref: "#/responses/NotFound"
+        401:
+          $ref: "#/responses/Unauthorized"
+          
+responses:
+  NotFound:
+    description: The specified resource was not found
+    schema:
+      $ref: "#/definitions/Error"
+  Unauthorized:
+    description: The queue/token combination is Invalid
+    schema:
+      $ref: "#/definitions/Error"
+
+definitions:
+  # Schema for error response body
+  Error:
+    type: object
+    properties:
+      msg:
+        type: string
+  Message:
+    type: object
+    properties:
+      id:
+        type: string
+      body:
+        type: string
+      reserved_count:
+        type: integer
+      reservation_id:
+        type: string
