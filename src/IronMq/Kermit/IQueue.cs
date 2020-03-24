@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using DR.Common.IronMq.Model;
+using DR.Common.IronMq.Kermit.Model;
 
-namespace DR.Common.IronMq
+namespace DR.Common.IronMq.Kermit
 {
     public interface IQueue<TSystem>
     {
@@ -94,8 +94,8 @@ namespace DR.Common.IronMq
 
         int MessageCount { get; }
 
-        Task<IronQueueInfo> QueueInfo();
+        Task<IQueueInfo> QueueInfo();
 
-        Task<IronQueueInfo> DeadletterQueueInfo();
+        Task<IQueueInfo> DeadletterQueueInfo();
     }
 }

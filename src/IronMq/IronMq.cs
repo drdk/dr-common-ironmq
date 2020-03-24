@@ -4,6 +4,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using DR.Common.IronMq.Kermit;
+using DR.Common.IronMq.Kermit.Model;
 using DR.Common.IronMq.Model;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -329,7 +331,7 @@ namespace DR.Common.IronMq
         #endregion
 
         #region Queue Info
-        public async Task<IronQueueInfo> QueueInfo()
+        public async Task<IQueueInfo> QueueInfo()
         {
             await SemaphoreSlim.WaitAsync();
 
@@ -353,7 +355,7 @@ namespace DR.Common.IronMq
             }
         }
 
-        public async Task<IronQueueInfo> DeadletterQueueInfo()
+        public async Task<IQueueInfo> DeadletterQueueInfo()
         {
             await SemaphoreSlim.WaitAsync();
 

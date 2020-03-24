@@ -1,4 +1,4 @@
-﻿namespace DR.Common.IronMq.Model
+﻿namespace DR.Common.IronMq.Kermit.Model
 {
     /// <summary>
     ///     Raw, unstranslated message from IQueueService
