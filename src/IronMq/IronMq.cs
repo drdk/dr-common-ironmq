@@ -243,7 +243,14 @@ namespace DR.Common.IronMq
             await PostMessage(data, _queueName);
         }
 
-        private async Task PostMessage(object data, string queueName)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="queueName"></param>
+        /// <param name="skipSemaphoreLock">Only set this to true, if the calling method has responsibility of locking the semaphore.</param>
+        /// <returns></returns>
+        private async Task PostMessage(object data, string queueName, bool skipSemaphoreLock=false)
         {
             if (data == null) 
                 throw new ArgumentNullException(nameof(data));
@@ -251,7 +258,10 @@ namespace DR.Common.IronMq
             if (queueName == null) 
                 throw new ArgumentNullException(nameof(queueName));
 
-            await SemaphoreSlim.WaitAsync();
+            if (!skipSemaphoreLock)
+            {
+                await SemaphoreSlim.WaitAsync();
+            }
 
             try
             {
@@ -271,7 +281,10 @@ namespace DR.Common.IronMq
             }
             finally
             {
-                SemaphoreSlim.Release();
+                if (!skipSemaphoreLock)
+                {
+                    SemaphoreSlim.Release();
+                }
             }
         }
         #endregion
@@ -286,7 +299,7 @@ namespace DR.Common.IronMq
 
             try
             {
-                await PostMessage(rawQueueMessage.Body, _deadLetterQueueName);
+                await PostMessage(rawQueueMessage.Body, _deadLetterQueueName, true);
 
                 await _client.Messages4Async(
                     _queueName, 
@@ -312,7 +325,7 @@ namespace DR.Common.IronMq
 
             try
             {
-                await PostMessage(rawQueueMessage.Body, _queueName);
+                await PostMessage(rawQueueMessage.Body, _queueName, true);
                 
                 await _client.Messages4Async(
                     _deadLetterQueueName, 
